@@ -1,7 +1,8 @@
-import os
-import requests
+
 import time
 import threading
+import os
+import requests
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from dotenv import load_dotenv
 
@@ -76,11 +77,12 @@ class PingHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b"OK")
 
-if __name__ == "__main__":
-    # Démarre la boucle du bot en arrière‑plan
-    threading.Thread(target=bot_loop, daemon=True).start()
+    def do_HEAD(self):
+        self.send_response(200)
+        self.end_headers()
 
-    # Démarre un serveur HTTP “pingable” sur le port fourni par Render
+if __name__ == "__main__":
+    threading.Thread(target=bot_loop, daemon=True).start()
     port = int(os.environ.get("PORT", 8000))
     server = HTTPServer(("0.0.0.0", port), PingHandler)
     print(f"Listening on port {port} for health checks…")
